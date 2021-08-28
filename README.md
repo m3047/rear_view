@@ -20,6 +20,12 @@ is included here in its unaltered form.
 `superpowers.py` runs just like `forwarder.py` except that it has a `superpowers.yaml` config file where
 you can take control of PTR lookups.
 
+### Additional resources
+
+* [PTR records explained](https://github.com/m3047/rear_view/blob/main/Ptr_Records_Explained.md)
+* [Some examples](https://github.com/m3047/rear_view/blob/main/Examples.md)
+* [Process Level Overrides with cwrap](https://github.com/m3047/rear_view/blob/main/Overrides_With_cwrap.md)
+
 ## Configuring `superpowers.yaml`
 
 **If you're trying to use this in its alpha state, please reach out to me at consulting@m3047.net** I'm not going
