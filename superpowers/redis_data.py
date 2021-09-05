@@ -29,7 +29,7 @@ async def get_all_clients(r_client):
     
     Returns a list of ipaddress *Address objects.
     """
-    return [ ipaddress.ip_address(v.split(';',1)[1]) for v in await r_client.keys('client;*') ]
+    return [ ipaddress.ip_address(v.split(b';',1)[1].decode()) for v in await r_client.keys('client;*') ]
 
 class ClientArtifact(object):
     """Base class for artifacts."""
@@ -273,7 +273,7 @@ async def Artifact(r_client, k, types=None):
     returns all the things.
     """
 
-    artifact_type = k.split(';')[-1]
+    artifact_type = k.split(b';')[-1].decode()
     if artifact_type not in ARTIFACT_MAPPER:
         return None
     if types is not None and artifact_type not in types:
@@ -283,7 +283,7 @@ async def Artifact(r_client, k, types=None):
     if not v:
         return None
     
-    return ARTIFACT_MAPPER[artifact_type](k, v)
+    return ARTIFACT_MAPPER[artifact_type](k.decode(), v.decode())
 
 DNS_TYPES = { 'dns', 'cname' }
 
