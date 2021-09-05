@@ -15,6 +15,24 @@
 
 """TCP Only DNS Forwarder with Superpowers
 
+Invoke as root:
+
+    superpowers.py {--tls} <udp-listen-address> <remote-server-address>
+    
+Parameters:
+
+    --tls       When specified uses DoT and contacts the DNS server on port 853
+    udp-listen  This is the address to listen on for dns request. It will be
+                127.0.0.1 most of the time.
+    remote-serv This is the address of your recursive resolver. It will be
+                contacted with a TCP connection rather than UDP.
+                
+Once it's running, use it as a (the only) nameserver in your network configuration.
+
+This DNS forwarder attempts to rewrite PTR answers using a variety of mechanisms.
+For all other requests, including as a fallback when its own local efforts fail,
+it will attempt to make a TCP connection to the recursive resolver.
+
 "Superpowers" refers to the ability to intercept and rewrite PTR queries as are
 typically performed by default by the many tools I use which I commonly postscript
 with "-n": arp, route, netstat, iptables....
@@ -110,7 +128,7 @@ def main(Listener):
         else:
             listen_address, remote_address = sys.argv[1:3]
     except:
-        print('Usage: forwarder.py {--tls} <udp-listen-address> <remote-server-address>', file=sys.stderr)
+        print('Usage: superpowers.py {--tls} <udp-listen-address> <remote-server-address>', file=sys.stderr)
         sys.exit(1)
     event_loop = asyncio.get_event_loop()
     listener = event_loop.create_datagram_endpoint(Listener, local_addr=(listen_address, 53))
