@@ -93,7 +93,7 @@ class Nets(object):
         """Return the effective scope."""
         all_bits = 2**32 - 1
         address = int(address)
-        for i in range(32):
+        for i in range(33):
             effective_address = address & (all_bits ^ (2**i - 1))
             if effective_address not in self.nets:
                 continue
