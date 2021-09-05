@@ -19,6 +19,27 @@ This project "embraces and extends" [tcp_only_forwarder](https://github.com/m304
 `superpowers.py` runs just like `forwarder.py` except that it has a `superpowers.yaml` config file where
 you can take control of PTR lookups.
 
+### Invocation
+
+Invoke as root:
+
+    superpowers.py {--tls} <udp-listen-address> <remote-server-address>
+    
+Parameters:
+
+    --tls       When specified uses DoT and contacts the DNS server on port 853
+    udp-listen  This is the address to listen on for dns request. It will be
+                127.0.0.1 most of the time.
+    remote-serv This is the address of your recursive resolver. It will be
+                contacted with a TCP connection rather than UDP.
+
+Once it's running, update your network configuration using the listen address (`127.0.0.1` in
+this example) as a (the only) nameserver.
+
+This DNS forwarder attempts to rewrite PTR answers using a variety of mechanisms.
+For all other requests, including as a fallback when its own local efforts fail,
+it will attempt to make a TCP connection to the recursive resolver.
+
 ### Additional resources
 
 * [PTR records explained](https://github.com/m3047/rear_view/blob/main/Ptr_Records_Explained.md)
