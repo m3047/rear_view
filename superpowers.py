@@ -26,6 +26,7 @@ information on configuration file format.
 import sys
 from os.path import dirname
 import asyncio
+import ssl
 
 import dns.message
 import dns.rrset
