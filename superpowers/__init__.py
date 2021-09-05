@@ -69,6 +69,7 @@ It is possible to leave the powers of a mapping empty to obtain just the
 default explicit rewritings specified with the subnets.
 """
 
+from os.path import join as path_join
 import asyncio
 
 import yaml
@@ -107,7 +108,20 @@ class InvalidConfiguration(AttributeError):
     pass
 
 class Powers(object):
-    """Encapsulates the notion that the DNS request is tractable to powers."""
+    """Encapsulates the notion that the DNS request is tractable to powers.
+    
+    Interactively troubleshooting configuration issues can look a lot like:
+
+        >>> from superpowers import *
+        >>> from ipaddress import ip_address, ip_network
+        >>> config = Config(load_config(), None)
+        >>> addr = ip_address('10.0.0.23')
+        >>> scope = config.nets.find(addr)
+        >>> scope
+        <superpowers.nets.Scope object at 0x7f03ee483ac8>
+        >>> str(scope)
+        '25 / last / office-norouting'
+    """
     def __init__(self, config, request):
         self.query = dns.message.from_wire(request)
         # Request type has to be PTR.
@@ -135,6 +149,11 @@ class Powers(object):
     
     @property
     def mode(self):
+        """Return the mode: first, last, always, never.
+        
+        If you're getting a stack trace, you should call the object directly and
+        evaluate it for true / false.
+        """
         return self.scope.mode
     
     @property
@@ -209,8 +228,8 @@ class Config(object):
             self.nets_ = Nets(self.config['subnets'])
         return self.nets_
     
-def load_config(config=CONFIG_FILE):
-    with open(config) as cf:
+def load_config(exec_dir, config=CONFIG_FILE):
+    with open(path_join(exec_dir, config)) as cf:
         config = yaml.safe_load(cf)
 
     # Validate the specific parameters which have to occur.
