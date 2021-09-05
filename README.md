@@ -24,7 +24,6 @@ you can take control of PTR lookups.
 
 * [PTR records explained](https://github.com/m3047/rear_view/blob/main/Ptr_Records_Explained.md)
 * [Some examples](https://github.com/m3047/rear_view/blob/main/Examples.md)
-* [Process Level Overrides with cwrap](https://github.com/m3047/rear_view/blob/main/Overrides_With_cwrap.md)
 
 ## Configuring `superpowers.yaml`
 
