@@ -23,27 +23,33 @@ Configuration is loaded from configuration.yaml. See "pydoc3 superpowers" for fu
 information on configuration file format.
 """
 
+import sys
+from os.path import dirname
 import asyncio
 
 import dns.message
 import dns.rrset
 import dns.rcode
 
-import forwarder
-from forwarder import UDPListener
 from superpowers import *
 
 TTL = 60
 
-class SuperUDPListener(UDPListener):
+class SuperUDPListener(asyncio.DatagramProtocol):
     """Here's where we get our superpowers by intermediating PTR requests."""
     
+    def __init__(self):
+        asyncio.DatagramProtocol.__init__(self)
+        self.config = None
+        return
+    
     def connection_made(self, transport):
-        self.config = Config(load_config(), self.event_loop)
-        UDPListener.connection_made(self, transport)
+        self.transport = transport
         return
 
     async def handle_request(self, request, addr):
+        if self.config is None:
+            self.config = Config(load_config(self.exec_dir), self.event_loop)
         powers = Powers(self.config, request)
 
         # first / last / always / never is sorted out here.
@@ -65,7 +71,7 @@ class SuperUDPListener(UDPListener):
             response = await reader.read(int.from_bytes(response_length, byteorder='big'))
             writer.close()
             dns_response = dns.message.from_wire(response)
-            if dns_response.rcode() == 0 or powers.mode == 'never':
+            if dns_response.rcode() == 0 or not powers() or powers.mode == 'never':
                 self.transport.sendto(response, addr)
                 return
         if powers() and powers.mode == 'last':
@@ -78,7 +84,7 @@ class SuperUDPListener(UDPListener):
                 return
         
         # If we're still hanging around then use the fallback value.
-        if powers() and powers.fqdn:
+        if powers() and powers.fqdn.strip('.'):
             dns_response = dns.message.make_response(powers.query, recursion_available=True)
             dns_response.answer.append( dns.rrset.from_text_list( dns_response.question[0].name, TTL, 'IN', 'PTR', [ powers.fqdn ] ))
             self.transport.sendto(dns_response.to_wire(), addr)
@@ -91,8 +97,47 @@ class SuperUDPListener(UDPListener):
 
         return
     
-if __name__ == '__main__':
-    forwarder.UDPListener = SuperUDPListener
-    forwarder.main()
-    
+    def datagram_received(self, request, addr):
+        self.event_loop.create_task(self.handle_request(request,addr))
+        return
 
+def main(Listener):
+    try:
+        tls = sys.argv[1] == '--tls'
+        if tls:
+            listen_address, remote_address = sys.argv[2:4]
+        else:
+            listen_address, remote_address = sys.argv[1:3]
+    except:
+        print('Usage: forwarder.py {--tls} <udp-listen-address> <remote-server-address>', file=sys.stderr)
+        sys.exit(1)
+    event_loop = asyncio.get_event_loop()
+    listener = event_loop.create_datagram_endpoint(Listener, local_addr=(listen_address, 53))
+    try:
+        transport, service = event_loop.run_until_complete(listener)
+    except PermissionError:
+        print('Permission Denied! (are you root?)', file=sys.stderr)
+        sys.exit(1)
+    except OSError as e:
+        print('{} (did you supply a loopback address?)'.format(e), file=sys.stderr)
+        sys.exit(1)
+        
+    service.event_loop = event_loop
+    service.remote_address = remote_address
+    service.exec_dir = dirname(sys.argv[0])
+    
+    if tls:
+        service.ssl = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    else:
+        service.ssl = None
+
+    try:
+        event_loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+
+    transport.close()
+    event_loop.close()
+
+if __name__ == "__main__":
+    main(SuperUDPListener)
