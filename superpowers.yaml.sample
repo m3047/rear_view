@@ -6,14 +6,15 @@
 # * shodohflo -- a redis database which is being updated by ShoDoHFlo
 params:
   sqlite: { db: 'superpowers.db' }
-  shodohflo: { redis_server: 'sophia.m3047' }
+  shodohflo: { redis_server: 'redis.example.com' }
 subnets:
-  - powers:
+  - powers: ['shodohflo']
     nets:
-      - 10.0.0.128/25   never   office-routable
-      - 10.0.0.0/25     never   office-norouting
+      - 10.0.0.128/25   last   office-routable
+      - 10.0.0.0/25     last   office-norouting
       - net:  10.0.1.0/24
-        mode: never
+        mode: last
         fqdn: media-network
-      - 10.0.0.0/23     never   locally-assigned
+      - 10.0.0.0/23     last   locally-assigned
+      - 0.0.0.0/0       first
 
