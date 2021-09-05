@@ -47,7 +47,7 @@ MAX_ASSOCS = 5000
 
 # These are the delays between started an entirely new refresh cycle, and refreshing
 # individual clients, respectively.
-CYCLE_DELAY = 120
+CYCLE_DELAY = 10
 CLIENT_DELAY = 1
 
 class Clients(object):
@@ -162,7 +162,7 @@ class Associations(object):
         return
     
     def get(self, k):
-        return self.index.get(k, None)
+        return self.index.get(str(k), None)
 
 class DictOfSets(dict):
     def add(self, k, v):
@@ -248,12 +248,12 @@ class Superpower(SuperpowerBase):
     def query(self, address):
         # Get all possible chains.
         chains = []
+
         self.follow_chains([address], chains)
-        
         # None?
         if not chains:
             return ''
-
+        
         # Only one?
         if len(chains) == 1:
             return chains[0][-1]
