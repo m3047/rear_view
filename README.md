@@ -80,3 +80,14 @@ This is a concept piece which explores several options for achieving the desired
 I also plan to eventually implement a service which integrates with _BIND_ using _Dnstap_ to populate a
 _Response Policy Zone_ with `PTR` records... in this case using the _RPZ_ as a source of truth rather
 than as a ban hammer.
+
+## Use Cases
+
+PTR record lookup is a "backdoor" we can utilize to increase the utility of existing tools instead of having to cut & paste into another tool to find out about an address. You can disable it in most tools with -n (that's how I use most of them most of the time), so it's a way to make a mode I seldom use customizable to increase usefulness.
+
+If you write / have a tool that supports PTR lookups, it's the "integration to rule them all" for getting your IoCs into those tools (see the sqlite power as an example).
+
+ShoDoHFlo in particular collapses CNAME chains and so addresses the increasingly prevalent case where PTR record are normally of no great use, instead offering the name which was actually looked up
+
+Imagine something like [EtherApe](https://etherape.sourceforge.io/) or your favorite graphical netflow tool with enhanced reverse lookups:
+![etherape](etherape.png)
