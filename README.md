@@ -14,8 +14,7 @@ _Superpowers_ refers to the ability to read minds and bend spoons (coming soon!)
 But until then I have the basics. You can create defaults which will be returned if the normal `PTR` lookup
 fails; I explain below.
 
-This project "embraces and extends" [tcp_only_forwarder](https://github.com/m3047/tcp_only_forwarder); `forwarder.py`
-is included here in its unaltered form.
+This project "embraces and extends" [tcp_only_forwarder](https://github.com/m3047/tcp_only_forwarder).
 
 `superpowers.py` runs just like `forwarder.py` except that it has a `superpowers.yaml` config file where
 you can take control of PTR lookups.
