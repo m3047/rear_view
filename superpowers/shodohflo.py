@@ -234,8 +234,8 @@ class Superpower(SuperpowerBase):
     def match_len(chain):
         """What is the common TLD?"""
         previous,current = chain[-2:]
-        previous = [ x for x in reversed(previous.split('.')) ]
-        current = [ x for x in reversed(current.split('.')) ]
+        previous = [ x for x in reversed(str(previous).split('.')) ]
+        current = [ x for x in reversed(str(current).split('.')) ]
 
         max_length = min(( len(x) for x in (previous,current) ))
         i = 0
