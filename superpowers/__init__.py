@@ -181,7 +181,6 @@ class Powers(object):
         return False
 
 class Config(object):
-    POSSIBLE_PARAMS = { 'sqlite', 'shodohflo' }
 
     def __init__(self, yaml_config, event_loop):
         """Takes a (preprocessed) YAML config as the argument.
@@ -201,7 +200,7 @@ class Config(object):
         If the power is not found in the list for which parameters are available,
         the value of default (by default None) is return.
         """
-        if power not in self.POSSIBLE_PARAMS:
+        if power not in RECOGNIZED_POWERS:
             raise KeyError("{} is not a recognized power.".format(power))
         params = self.config['params']
         return power in params and params[power] or default
