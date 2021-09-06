@@ -120,9 +120,13 @@ www.cnn.com.            300     IN      CNAME   turner-tls.map.fastly.net.
 turner-tls.map.fastly.net. 30   IN      A       151.101.53.67
 ```
 
+A bunch of _deus ex machina_ stuff happens here. A DNS lookup. That gets broadcast by the _DnsTap_
+interface in the _BIND_ nameserver and is received by the _ShoDoHFlo_ dns agent and written to a
+_Redis_ database which we are querying...
+
 #### The tcpdump surprise
 
-But now when we run _tcpdump_ look what happens:
+Now when we run _tcpdump_ look what happens:
 
 ```
 # tcpdump -ieth0 dst host 151.101.53.67
