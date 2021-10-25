@@ -1,6 +1,6 @@
 # Superpowers!
 
-**STATUS: Very very alpha**
+**STATUS: solid alpha ("works on my machines, should generalize")**
 
 There are all kinds of systemly utilities which helpfully try reverse DNS lookup on addresses. It's useless;
 I'm always using `-n`. `netstat -n`, `iptables -n`, you get the idea.
